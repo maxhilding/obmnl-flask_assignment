@@ -15,18 +15,35 @@ def get_transactions():
 # Create operation
 @app.route('/add', methods=["GET", "POST"])
 def add_transaction():
-    if request.method = "POST":
+    if request.method == "POST":
         transaction = {
             'id': len(transactions) + 1,            # Generate a new ID based on the current length of the transactions list
             'date': request.form['date'],           # Get the 'date' field value from the form
             'amount': float(request.form['amount']) # Get the 'amount' field value from the form and convert it to a float
         }
         transactions.append(transaction)
-        return redirect(url_for("get_transacions"))
+        return redirect(url_for("get_transactions"))
     return render_template('form.html')
 # Update operation
-
+@app.route('/edit/<int:transaction_id>', methods=["GET", "POST"])
+def edit_transaction(transaction_id):
+    if request.method == "POST":
+        for transaction in transactions:
+            if transaction["id"] == transaction_id:
+                transaction['date'] == request.form['date']
+                transaction['amount'] == float(request.form['amount'])
+                return redirect(url_for('get_transactions'))
+    for transaction in transactions:
+        if transaction['id'] == transaction_id:
+            return render_template('edit.html', transaction=transaction)
+    return {"message": "Transaction not found"}, 404
 # Delete operation
-
+@app.route('/delete/<int:transaction_id>')
+def delete_transaction(transaction_id):
+    for transaction in transactions:
+        if transaction['id'] == transaction_id:
+            transactions.remove(transaction)
+    return redirect(url_for('get_transactions'))
 # Run the Flask app
-    
+if __name__ == "__main__":
+    app.run(debug=True) 
